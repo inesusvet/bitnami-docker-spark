@@ -1,8 +1,13 @@
 version: '2'
 
 services:
+  jupyter:
+    image: jupyter/pyspark-notebook
+    ports:
+      - '8888:8888'
+      - '4040:4040'
   spark:
-    image: docker.io/bitnami/spark:3-debian-10
+    image: bitnami/spark
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -10,9 +15,10 @@ services:
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
     ports:
+      - '7077:7077'
       - '8080:8080'
   spark-worker-1:
-    image: docker.io/bitnami/spark:3-debian-10
+    build: .
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -23,7 +29,7 @@ services:
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
   spark-worker-2:
-    image: docker.io/bitnami/spark:3-debian-10
+    build: .
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
